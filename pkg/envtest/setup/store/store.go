@@ -226,7 +226,7 @@ func (s *Store) Remove(ctx context.Context, matching Filter) ([]Item, error) {
 }
 
 // Path returns an actual path that case be used to access this item.
-func (s *Store) Path(item Item) (string, error) {
+func (s *Store) Path(item Item) string {
 	path := s.unpackedPath(item.dirName())
 	// NB(directxman12): we need root's realpath because RealPath only
 	// looks at its own path, and so thus doesn't prepend the underlying
@@ -234,7 +234,7 @@ func (s *Store) Path(item Item) (string, error) {
 	//
 	// Technically, if we're fed something that's double wrapped as root,
 	// this'll be wrong, but this is basically as much as we can do
-	return afero.FullBaseFsPath(path.(*afero.BasePathFs), ""), nil
+	return afero.FullBaseFsPath(path.(*afero.BasePathFs), "")
 }
 
 // unpackedBase returns the directory in which item dirs lives.

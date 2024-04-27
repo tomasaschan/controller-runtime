@@ -171,6 +171,10 @@ func (s *Spec) MakeConcrete(ver Concrete) {
 	s.CheckLatest = false
 }
 
+func (s Spec) IsConcrete() bool {
+	return s.AsConcrete() != nil
+}
+
 // AsConcrete returns the underlying selector as a concrete version, if
 // possible.
 func (s Spec) AsConcrete() *Concrete {

@@ -217,3 +217,27 @@ func (c *Client) FetchSum(ctx context.Context, ver versions.Concrete, pl *versio
 	pl.MD5 = item.Hash
 	return nil
 }
+
+func (c *Client) LatestVersion(ctx context.Context, spec versions.Spec, platform versions.Platform) (versions.Concrete, error) {
+	vers, err := c.ListVersions(ctx)
+	if err != nil {
+		return versions.Concrete{}, fmt.Errorf("unable to list versions: %w", err)
+	}
+
+	for _, set := range vers {
+		if !spec.Matches(set.Version) {
+			c.Log.V(1).Info("Skipping non-matching version", "version", set.Version)
+			continue
+		}
+
+		for _, plat := range set.Platforms {
+			if platform.Matches(plat.Platform) {
+				return set.Version, nil
+			}
+		}
+
+		c.Log.V(1).Info("Version is not supported on your platform, checking older ones", "version", set.Version, "platform", platform)
+	}
+
+	return versions.Concrete{}, fmt.Errorf("no version found for platform %s", platform)
+}

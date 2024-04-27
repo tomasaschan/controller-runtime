@@ -5,6 +5,7 @@ package versions
 
 import (
 	"fmt"
+	"path/filepath"
 	"regexp"
 	"strconv"
 )
@@ -119,4 +120,14 @@ func PatchSelectorFromMatch(match []string, re *regexp.Regexp) PatchSelector {
 		Minor: minor,
 		Patch: patch,
 	}
+}
+
+func FromPath(path string) (*Concrete, error) {
+	baseName := filepath.Base(path)
+	ver, _ := ExtractWithPlatform(VersionPlatformRE, baseName)
+	if ver == nil {
+		return nil, fmt.Errorf("unable to extract version from %q", path)
+	}
+
+	return ver, nil
 }
